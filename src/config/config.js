@@ -1,0 +1,1 @@
+export const empStructure = "/fe-example-structure.json";

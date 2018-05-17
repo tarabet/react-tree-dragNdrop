@@ -1,0 +1,82 @@
+{
+   "Jonas":{
+      "position":"CTO",
+      "employees":[
+         {
+            "Sophie":{
+               "position":"VP Engineering",
+               "employees":[
+                  {
+                     "Nick":{
+                        "position":"Frontend Team Lead",
+                        "employees":[
+                           {
+                              "Pete":{
+                                 "position":"Frontend Engineer",
+                                 "employees":[
+
+                                 ]
+                              }
+                           },
+                           {
+                              "Barbara":{
+                                 "position":"Fronted Engineer",
+                                 "employees":[
+
+                                 ]
+                              }
+                           }
+                        ]
+                     }
+                  },
+                  {
+                     "Vik":{
+                        "position":"UX Team Lead",
+                        "employees":[
+                           {
+                              "Anna":{
+                                 "position":"UX Engineer",
+                                 "employees":[
+
+                                 ]
+                              }
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         },
+         {
+            "Sara":{
+               "position":"BE Engineering",
+               "employees":[
+                  {
+                     "Simon":{
+                        "position":"BE Team Lead",
+                        "employees":[
+                           {
+                              "Alex":{
+                                 "position":"Backend Engineer",
+                                 "employees":[
+
+                                 ]
+                              }
+                           },
+                           {
+                              "Jessie":{
+                                 "position":"Backend Engineer",
+                                 "employees":[
+
+                                 ]
+                              }
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      ]
+   }
+}
