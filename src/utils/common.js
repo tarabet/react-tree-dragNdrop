@@ -11,6 +11,7 @@ const handleErrors = (resp) => {
 
 export const getJson = (url) => {
     return fetch('/fe-example-structure.json')
+    // return fetch('/fe-small-structure.json')
         .then(handleErrors)
         .then((resp) => resp.json())
         .catch((error) => {
@@ -49,7 +50,7 @@ class Tree {
         while(currentTree){
             if (currentTree.children.length > 0) {
                 for (let i = 0, length = currentTree.children.length; i < length; i++) {
-                    queue.enqueue(new Node (currentTree.children[i], currentTree.level + 1, currentTree.name));
+                    queue.enqueue(new Node (currentTree.children[i], currentTree.level + 3, currentTree.name));
                 }
             }
 
@@ -57,6 +58,21 @@ class Tree {
             currentTree = queue.dequeue();
         }
 
-        return tree;
+        return sortByParent(tree);
     };
 }
+
+export const sortByParent = (tree) => {
+    const sortedTree = [];
+
+    (function recurse(currentNode) {
+        if (currentNode.children.length > 0) {
+            for (let i = 0, length = currentNode.children.length; i < length; i++) {
+                recurse(new Node(currentNode.children[i], currentNode.level + 3, currentNode.name));
+            }
+        }
+        sortedTree.unshift(currentNode);
+    })(tree[0]);
+
+    return sortedTree;
+};

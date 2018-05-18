@@ -6,7 +6,7 @@ import {
     PageHeader,
 } from "react-bootstrap";
 import { Msg } from "../../utils/Msg";
-import { getJson, genEmpStructure } from "../../utils/common";
+import { getJson, genEmpStructure, sortByParent } from "../../utils/common";
 import { empStructure } from "../../config/config";
 import { EmpCard } from "../../components/empl-card";
 
@@ -32,9 +32,11 @@ export class AppWrapper extends React.Component {
     }
 
     buildStructure(structure) {
+        const treeObj = genEmpStructure(structure);
+
         this.setState({
             ...this.state,
-            structure: genEmpStructure(structure),
+            structure: treeObj.tree,
         });
     }
 
@@ -60,7 +62,7 @@ export class AppWrapper extends React.Component {
     }
 
     render() {
-        console.log("State:", this.state);
+        console.log("Tree:", this.state.structure);
 
         return(
             <Row className="show-grid">
@@ -68,10 +70,17 @@ export class AppWrapper extends React.Component {
                     <PageHeader>
                         {Msg.app.pageHeaderTitle} <span>{this.state.loading ? "...Loading" : ""}</span>
                     </PageHeader>
-                    <EmpCard
-                        name={"Some name"}
-                        position={"Some position"}
-                    />
+                    {this.state.structure && this.state.structure.map((item, i) => (
+                        <div
+                            style={{marginLeft: item.level + "em"}}
+                            key={i}
+                        >
+                            <EmpCard
+                                name={item.name}
+                                position={item.position}
+                            />
+                        </div>
+                    ))}
                 </Col>
             </Row>
         )
