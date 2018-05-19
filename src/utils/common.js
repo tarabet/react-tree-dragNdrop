@@ -1,7 +1,5 @@
 import 'whatwg-fetch';
 
-const Queue = require("./Queue");
-
 const handleErrors = (resp) => {
     if (!resp.ok) {
         throw Error(resp.statusText);
@@ -10,12 +8,11 @@ const handleErrors = (resp) => {
 };
 
 export const getJson = (url) => {
-    return fetch('/fe-example-structure.json')
-    // return fetch('/fe-small-structure.json')
+    return fetch(url)
         .then(handleErrors)
         .then((resp) => resp.json())
         .catch((error) => {
-            console.log(error);
+            alert("Cannot read JSON. Check filename or URL.");
         });
 };
 
@@ -25,54 +22,75 @@ export const genEmpStructure = (raw) => {
 
 class Node {
     constructor(data, level, parent) {
+        if (Object.getOwnPropertyNames(data).length > 1) {
+            alert("You cannot have two CEOs. One of them will be ignored");
+        }
+
         this.name = Object.getOwnPropertyNames(data)[0];
         this.position = data[this.name].position;
         this.parent = parent;
         this.level = level;
-        this.children = data[this.name].employees;
+        this.children = data[this.name].employees.map((item) => {
+            return new Node(item, level + 1, this.name);
+        });
     }
 }
 
 class Tree {
     constructor(data) {
-        this._root = new Node(data, 1, null);
-        this.tree = this.buildTree();
+        this.tree = new Node(data, 1, null);
     }
 
-    buildTree = function() {
-        let queue = new Queue();
-        let tree = [];
-
-        queue.enqueue(this._root);
-
-        let currentTree = queue.dequeue();
-
-        while(currentTree){
-            if (currentTree.children.length > 0) {
-                for (let i = 0, length = currentTree.children.length; i < length; i++) {
-                    queue.enqueue(new Node (currentTree.children[i], currentTree.level + 3, currentTree.name));
+    traverseDepth = (tree, callback) => {
+        (function recurse(currentNode) {
+            if (currentNode.children.length > 0) {
+                for (let i = 0, length = currentNode.children.length; i < length; i++) {
+                    recurse(currentNode.children[i]);
                 }
             }
-
-            tree.push(currentTree);
-            currentTree = queue.dequeue();
-        }
-
-        return sortByParent(tree);
+            callback(currentNode);
+        })(tree);
     };
-}
 
-export const sortByParent = (tree) => {
-    const sortedTree = [];
+    getTree() {
+        const sortedTree = [];
 
-    (function recurse(currentNode) {
-        if (currentNode.children.length > 0) {
-            for (let i = 0, length = currentNode.children.length; i < length; i++) {
-                recurse(new Node(currentNode.children[i], currentNode.level + 3, currentNode.name));
+        this.traverseDepth(this.tree, (currentNode) => {
+            sortedTree.unshift(currentNode);
+        });
+
+        return sortedTree;
+    }
+
+    modifyTree(source, target) {
+        let sourceNode = null;
+        let origParent = null;
+
+        this.traverseDepth(this.tree, (currentNode) => {
+            if (currentNode.name === source) {
+                sourceNode = currentNode;
             }
-        }
-        sortedTree.unshift(currentNode);
-    })(tree[0]);
+        });
 
-    return sortedTree;
-};
+        if (sourceNode && sourceNode.parent !== target && source !== target) {
+            origParent = sourceNode.parent;
+
+            this.traverseDepth(this.tree, (currentNode) => {
+                if (currentNode.name === target) {
+                    sourceNode.parent = target;
+                    sourceNode.level = currentNode.level + 1;
+
+                    currentNode.children.push(sourceNode);
+                } else if (currentNode.name === origParent) {
+                    currentNode.children.forEach((item, i , arr) => {
+                        if (item.name === source) {
+                            arr.splice(i, 1);
+                        }
+                    })
+                }
+            });
+        }
+
+        return this.getTree();
+    }
+}
