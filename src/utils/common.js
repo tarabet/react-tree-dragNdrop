@@ -72,6 +72,10 @@ class Tree {
             }
         });
 
+        if (sourceNode.parent === target) {
+            alert("You cannot assign employee to already assigned boss!");
+        }
+
         if (sourceNode && sourceNode.parent !== target && source !== target) {
             origParent = sourceNode.parent;
 
